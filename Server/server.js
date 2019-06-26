@@ -20,11 +20,43 @@ app.get("/", function(req, res) {
 app.use('/Client', express.static(clientPath + '/Client'));
 
 serv.listen(2000);
+setInterval(status, 10000);
 
-console.log("server operational.");
+var clients = [];
+var gameRooms = [];
 
 io.sockets.on('connection', function(socket) {
 
-    console.log("new connection");
+    var client = {
+        name: null,
+        inGameRoom: null,
+        socketID: socket.id,
+    }
+
+    socket.on('joinGame', function(name, host, roomCode) {
+
+        if (host) {
+
+            console.log("wants to host");
+
+        }
+
+    })
 
 })
+
+function status() {
+    printWithTime("Server Operational");
+}
+
+function printWithTime(msg) {
+
+    var date = new Date();
+
+    var hour = date.getHours();
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    console.log('\033[2J');
+
+    console.log(hour + ":" + minute + ":" + second + " - " + msg);
+}
