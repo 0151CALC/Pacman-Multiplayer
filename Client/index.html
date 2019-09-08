@@ -7,7 +7,97 @@
         <style>
 
             body {
-                background-color: red;
+                background-color: lightgray;
+                font-family: Trebuchet MS;
+            }
+
+            h2 {
+                font-size: 5vw;
+                text-align: center;
+            }
+
+            h4 {
+                font-size: 2vw;
+                text-align: center;
+            }
+
+            #username {
+                height: 50px;
+                width: 25%;
+                display: block;
+                margin: 0 auto;
+                border-radius: 5px;
+                border: none;
+                padding: 15px;
+                font-size: 25px;
+                text-align: center;
+                border: 1px solid black;
+            }
+
+            #username:focus {
+                outline: none;
+            }
+
+            /* The switch - the box around the slider */
+            .switch {
+                position: relative;
+                display: block;
+                width: 120px;
+                height: 34px;
+                margin: 0 auto;
+            }
+
+            /* Hide default HTML checkbox */
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            /* The slider */
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #dc3545;
+                -webkit-transition: .4s;
+                transition: .4s;
+                border-radius: 5px;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 52px;
+                left: 8px;
+                bottom: 4px;
+                background-color: white;
+                -webkit-transition: .4s;
+                transition: .4s;
+                border-radius: 5px;
+            }
+
+            input:checked + .slider {
+                background-color: #28a745;
+            }
+
+            input:checked + .slider:before {
+                -webkit-transform: translateX(52px);
+                -ms-transform: translateX(52px);
+                transform: translateX(52px);
+            }
+
+            /* Rounded sliders */
+            .slider.round {
+                border-radius: 34px;
+            }
+
+            .slider.round:before {
+                border-radius: 50%;
             }
 
 
@@ -24,9 +114,25 @@
 
         </script>
 
+        <h2>
+
+            Multiplayer Pacman!
+
+        </h2>
+
+
+
         <form ID="infoForm">
 
-            <input ID="username" type="text" autocomplete="off" autofocus="autofocus">
+            <input ID="username" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter a Username">
+
+            <h4>Host a game?</h4>
+
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+
             <input ID="wantsToHost" type="radio">
             <input ID="submitButton" type="submit" value="Submit">
 

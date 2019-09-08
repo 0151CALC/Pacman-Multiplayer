@@ -20,9 +20,10 @@ app.get("/", function(req, res) {
 app.use('/Client', express.static(clientPath + '/Client'));
 
 serv.listen(2000);
-setInterval(status, 10000);
+printWithTime("Server Operational");
+setInterval(status, 1000); // run status function every second.
 
-var clients = [];
+var clients = new Map();
 var gameRooms = [];
 
 io.sockets.on('connection', function(socket) {
@@ -30,7 +31,6 @@ io.sockets.on('connection', function(socket) {
     var client = {
         name: null,
         inGameRoom: null,
-        socketID: socket.id,
     }
 
     socket.on('joinGame', function(name, host, roomCode) {
@@ -43,10 +43,25 @@ io.sockets.on('connection', function(socket) {
 
     })
 
+    clients.set(socket.id, client)
+
+    socket.on('disconnect', function() {
+
+        clients.delete(socket.id);
+
+
+    })
+
 })
 
 function status() {
-    printWithTime("Server Operational");
+
+    if (clients.size > 0) {
+        printWithTime("There are " + clients.size +  " client(s) connected");
+    } else {
+        printWithTime("There are no clients connected");
+    }
+
 }
 
 function printWithTime(msg) {
@@ -56,7 +71,7 @@ function printWithTime(msg) {
     var hour = date.getHours();
     var minute = date.getMinutes();
     var second = date.getSeconds();
-    console.log('\033[2J');
+    //console.log('\033[2J');
 
     console.log(hour + ":" + minute + ":" + second + " - " + msg);
 }
