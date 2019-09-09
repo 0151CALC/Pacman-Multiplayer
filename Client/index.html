@@ -17,25 +17,41 @@
             }
 
             h4 {
-                font-size: 2vw;
+                font-size: 25px;
                 text-align: center;
+                margin: 0;
+                margin-bottom: 5px;
+                font-weight: normal;
+                color: gray;
             }
 
             #username {
                 height: 50px;
-                width: 25%;
+                width: 500px;
                 display: block;
                 margin: 0 auto;
-                border-radius: 5px;
                 border: none;
                 padding: 15px;
                 font-size: 25px;
                 text-align: center;
                 border: 1px solid black;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
             }
+
 
             #username:focus {
                 outline: none;
+            }
+
+            #hostContainer {
+                width: 487.5px;
+                height: 70px;
+                margin: 0 auto;
+                border: 1px solid black;
+                border-top: none;
+                background-color: white;
+                padding: 5px;
             }
 
             /* The switch - the box around the slider */
@@ -112,6 +128,14 @@
 
             var socket = io.connect();
 
+            function setHost() {
+                console.log(document.getElementById("hostCheckbox").checked);
+
+                if (document.getElementById("hostCheckbox").checked) {
+                    
+                }
+            }
+
         </script>
 
         <h2>
@@ -125,15 +149,14 @@
         <form ID="infoForm">
 
             <input ID="username" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter a Username">
+            <div ID="hostContainer">
+                <h4>Host a game?</h4>
+                <label class="switch">
+                    <input ID="hostCheckbox" type="checkbox" onchange="setHost()">
+                    <span class="slider"></span>
+                </label>
+            </div>
 
-            <h4>Host a game?</h4>
-
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
-
-            <input ID="wantsToHost" type="radio">
             <input ID="submitButton" type="submit" value="Submit">
 
 
