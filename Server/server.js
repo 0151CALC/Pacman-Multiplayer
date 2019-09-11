@@ -24,7 +24,7 @@ printWithTime("Server Operational");
 setInterval(status, 1000); // run status function every second.
 
 var clients = new Map();
-var gameRooms = [];
+var games = new Map();
 
 io.sockets.on('connection', function(socket) {
 
@@ -33,14 +33,40 @@ io.sockets.on('connection', function(socket) {
         inGameRoom: null,
     }
 
-    socket.on('joinGame', function(name, host, roomCode) {
+    socket.on('joinGame', function(data) {
 
-        if (host) {
-
-            console.log("wants to host");
-
+        if (data.name != "" && data.name != null) {
+            client.name = data.name
         }
 
+        if (data.wantsToHost) {
+
+            var allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // The set of characters that will be used to create the random 4 char code for the room.
+            var generatedCode = ""; // Initializing a string var for the generated code.
+
+            for (i = 0; i < 4; i++) { // Simple for loop which will be executed 4 times.
+                var ranNum = Math.floor(Math.random() * allowedChars.length); // Select a random char from the code set.
+                generatedCode += allowedChars.charAt(ranNum); // Add the selected code to the end of the genrerated code string.
+            }
+
+            var game = {
+                roomCode: generatedCode,
+                playersInGame: [
+                    socket.id
+                ]
+            }
+
+            clients.get(socket.id).inGameRoom = generatedCode;
+
+            games.set(generatedCode, game)
+        } else if (!data.wantsToHost) {
+            if (data.gameCode != "" && data.gameCode != null) {
+                if (games.has(data.gameCode)) {
+                    games.get(data.gameCode).playersInGame.push(socket.id)
+                    clients.get(socket.id).inGameRoom = data.gameCode;
+                }
+            }
+        }
     })
 
     clients.set(socket.id, client)
@@ -55,6 +81,8 @@ io.sockets.on('connection', function(socket) {
 })
 
 function status() {
+    console.log(clients)
+    console.log(games);
 
     if (clients.size > 0) {
         printWithTime("There are " + clients.size +  " client(s) connected");

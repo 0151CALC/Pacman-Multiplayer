@@ -54,6 +54,33 @@
                 padding: 5px;
             }
 
+            #gamecodeInput {
+                height: 50px;
+                width: 500px;
+                display: block;
+                margin: 0 auto;
+                border: none;
+                padding: 15px;
+                font-size: 25px;
+                text-align: center;
+                border: 1px solid black;
+                border-top: none;
+
+            }
+
+            #submitButton {
+                height: 50px;
+                width: 500px;
+                display: block;
+                margin: 0 auto;
+                background-color: #28a745;
+                border: 1px solid green;
+                border-radius: 5px;
+                margin-top: 10px;
+                color: white;
+                font-size: 25px;
+            }
+
             /* The switch - the box around the slider */
             .switch {
                 position: relative;
@@ -123,21 +150,6 @@
 
     <body>
 
-        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-        <script>
-
-            var socket = io.connect();
-
-            function setHost() {
-                console.log(document.getElementById("hostCheckbox").checked);
-
-                if (document.getElementById("hostCheckbox").checked) {
-                    
-                }
-            }
-
-        </script>
-
         <h2>
 
             Multiplayer Pacman!
@@ -146,9 +158,9 @@
 
 
 
-        <form ID="infoForm">
 
-            <input ID="username" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter a Username">
+        <form ID="mainForm" action="">
+            <input ID="username" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter a Username" required>
             <div ID="hostContainer">
                 <h4>Host a game?</h4>
                 <label class="switch">
@@ -156,12 +168,46 @@
                     <span class="slider"></span>
                 </label>
             </div>
-
-            <input ID="submitButton" type="submit" value="Submit">
-
-
+            <input ID="gamecodeInput" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter the Game Code" required>
+            <input ID="submitButton" type="submit" value="Play!">
         </form>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+        <script>
 
+            var socket = io.connect();
+
+            var wantsToHost = false
+
+            function setHost() {
+
+                document.getElementById("gamecodeInput").value = "";
+                if (document.getElementById("hostCheckbox").checked) {
+                    document.getElementById("gamecodeInput").style.display = "none";
+                    document.getElementById("gamecodeInput").removeAttribute("required")
+                    wantsToHost = true
+                } else {
+                    document.getElementById("gamecodeInput").style.display = "block";
+                    document.getElementById("gamecodeInput").setAttribute("required", "true")
+                    wantsToHost = false
+                }
+            }
+
+            $('#mainForm').submit(function(event){
+
+                socket.emit('joinGame', {
+                    name: document.getElementById("username").value,
+                    wantsToHost: wantsToHost,
+                    gameCode: document.getElementById("gamecodeInput").value
+                });
+
+
+                return false;
+            });
+
+        </script>
     </body>
 
 </html>
