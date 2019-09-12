@@ -64,6 +64,8 @@ io.sockets.on('connection', function(socket) {
                 if (games.has(data.gameCode)) {
                     games.get(data.gameCode).playersInGame.push(socket.id)
                     clients.get(socket.id).inGameRoom = data.gameCode;
+                } else {
+                    socket.emit('gameCodeInvalid', {});
                 }
             }
         }

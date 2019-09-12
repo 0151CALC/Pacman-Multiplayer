@@ -81,6 +81,20 @@
                 font-size: 25px;
             }
 
+            #errorContainer {
+                height: 50px;
+                width: 500px;
+                display: none;
+                margin: 0 auto;
+                background-color: #dc3545;
+                border-radius: 5px;
+                margin-top: 10px;
+                color: white;
+                font-size: 25px;
+                text-align: center;
+                line-height: 50px;
+            }
+
             /* The switch - the box around the slider */
             .switch {
                 position: relative;
@@ -168,8 +182,9 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <input ID="gamecodeInput" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter the Game Code" required>
+            <input ID="gamecodeInput" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter the Game Code" onchange="document.getElementById('gamecodeInput').style.color = 'black'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" required>
             <input ID="submitButton" type="submit" value="Play!">
+            <div ID="errorContainer"></div>
         </form>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -182,7 +197,7 @@
             var wantsToHost = false
 
             function setHost() {
-
+                document.getElementById("errorContainer").style.display = "none";
                 document.getElementById("gamecodeInput").value = "";
                 if (document.getElementById("hostCheckbox").checked) {
                     document.getElementById("gamecodeInput").style.display = "none";
@@ -207,6 +222,11 @@
                 return false;
             });
 
+            socket.on('gameCodeInvalid', function() {
+                document.getElementById("gamecodeInput").style.color = "red";
+                document.getElementById("errorContainer").style.display = "block";
+                document.getElementById("errorContainer").innerHTML = "Game Code Invalid"
+            })
         </script>
     </body>
 
