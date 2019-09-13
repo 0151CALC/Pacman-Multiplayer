@@ -52,6 +52,8 @@
                 border-top: none;
                 background-color: white;
                 padding: 5px;
+                z-index: 5;
+                position: relative;
             }
 
             #gamecodeInput {
@@ -65,7 +67,9 @@
                 text-align: center;
                 border: 1px solid black;
                 border-top: none;
-
+                z-index: 3;
+                position: relative;
+                transition: 0.4s;
             }
 
             #submitButton {
@@ -79,6 +83,7 @@
                 margin-top: 10px;
                 color: white;
                 font-size: 25px;
+                transition: .4s;
             }
 
             #errorContainer {
@@ -200,11 +205,15 @@
                 document.getElementById("errorContainer").style.display = "none";
                 document.getElementById("gamecodeInput").value = "";
                 if (document.getElementById("hostCheckbox").checked) {
-                    document.getElementById("gamecodeInput").style.display = "none";
+                    //document.getElementById("gamecodeInput").style.display = "none";
+                    document.getElementById("gamecodeInput").style.transform = "translateY(-50px)";
+                    document.getElementById("submitButton").style.transform = "translateY(-50px)";
                     document.getElementById("gamecodeInput").removeAttribute("required")
                     wantsToHost = true
                 } else {
-                    document.getElementById("gamecodeInput").style.display = "block";
+                    //document.getElementById("gamecodeInput").style.display = "block";
+                    document.getElementById("gamecodeInput").style.transform = "translateY(0px)";
+                    document.getElementById("submitButton").style.transform = "translateY(0px)";
                     document.getElementById("gamecodeInput").setAttribute("required", "true")
                     wantsToHost = false
                 }
