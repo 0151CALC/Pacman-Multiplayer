@@ -222,10 +222,10 @@
                 return false;
             });
 
-            socket.on('gameCodeInvalid', function() {
+            socket.on('displayErrorMsg', function(data) {
                 document.getElementById("gamecodeInput").style.color = "red";
                 document.getElementById("errorContainer").style.display = "block";
-                document.getElementById("errorContainer").innerHTML = "Game Code Invalid"
+                document.getElementById("errorContainer").innerHTML = data.msg;
             })
         </script>
     </body>

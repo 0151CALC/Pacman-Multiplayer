@@ -38,46 +38,60 @@ io.sockets.on('connection', function(socket) {
         if (data.name != "" && data.name != null) {
             client.name = data.name
         }
+        if (clients.get(socket.id).inGameRoom == null) {
+            if (data.wantsToHost) {
 
-        if (data.wantsToHost) {
+                var allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // The set of characters that will be used to create the random 4 char code for the room.
+                var generatedCode = ""; // Initializing a string var for the generated code.
 
-            var allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // The set of characters that will be used to create the random 4 char code for the room.
-            var generatedCode = ""; // Initializing a string var for the generated code.
+                for (i = 0; i < 4; i++) { // Simple for loop which will be executed 4 times.
+                    var ranNum = Math.floor(Math.random() * allowedChars.length); // Select a random char from the code set.
+                    generatedCode += allowedChars.charAt(ranNum); // Add the selected code to the end of the genrerated code string.
+                }
 
-            for (i = 0; i < 4; i++) { // Simple for loop which will be executed 4 times.
-                var ranNum = Math.floor(Math.random() * allowedChars.length); // Select a random char from the code set.
-                generatedCode += allowedChars.charAt(ranNum); // Add the selected code to the end of the genrerated code string.
-            }
+                var game = {
+                    roomCode: generatedCode,
+                    playersInGame: [
+                        socket.id
+                    ]
+                }
 
-            var game = {
-                roomCode: generatedCode,
-                playersInGame: [
-                    socket.id
-                ]
-            }
+                clients.get(socket.id).inGameRoom = generatedCode;
 
-            clients.get(socket.id).inGameRoom = generatedCode;
-
-            games.set(generatedCode, game)
-        } else if (!data.wantsToHost) {
-            if (data.gameCode != "" && data.gameCode != null) {
-                if (games.has(data.gameCode)) {
-                    games.get(data.gameCode).playersInGame.push(socket.id)
-                    clients.get(socket.id).inGameRoom = data.gameCode;
-                } else {
-                    socket.emit('gameCodeInvalid', {});
+                games.set(generatedCode, game)
+            } else if (!data.wantsToHost) {
+                if (data.gameCode != "" && data.gameCode != null) {
+                    if (games.has(data.gameCode)) {
+                        games.get(data.gameCode).playersInGame.push(socket.id)
+                        clients.get(socket.id).inGameRoom = data.gameCode;
+                    } else {
+                        socket.emit('displayErrorMsg', {
+                            msg: "Game Code Invalid"
+                        });
+                    }
                 }
             }
+        } else {
+            console.log("User '" + clients.get(socket.id).name + "' tried to join another game before leaving the one they are in.");
         }
+
     })
 
     clients.set(socket.id, client)
 
     socket.on('disconnect', function() {
 
-        clients.delete(socket.id);
+        gamecode = clients.get(socket.id).inGameRoom;
+        if (gamecode != null) {
+            if (games.get(gamecode).playersInGame.length == 1) {
+                games.delete(gamecode); // If by this player leaving the room becomes empty delete the room.
+            } else if (games.get(gamecode).playersInGame.length > 1) {
+                index = games.get(gamecode).playersInGame.indexOf(socket.id);
+                games.get(gamecode).playersInGame.splice(index, 1); // else just remove the players socket.id from the array playersInGame.
+            }
+        }
 
-
+        clients.delete(socket.id); // delete the client from the clients array.
     })
 
 })

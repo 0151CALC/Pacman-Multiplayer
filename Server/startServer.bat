@@ -15,3 +15,5 @@ echo.
 echo. 
 
 node server.js
+
+cmd /k
