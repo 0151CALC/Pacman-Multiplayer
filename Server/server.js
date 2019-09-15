@@ -35,6 +35,9 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('joinGame', function(data) {
 
+        var success = false
+        var gameCode = data.gameCode;
+
         if (data.name != "" && data.name != null) {
             client.name = data.name
         }
@@ -59,11 +62,15 @@ io.sockets.on('connection', function(socket) {
                 clients.get(socket.id).inGameRoom = generatedCode;
 
                 games.set(generatedCode, game)
+
+                gameCode = generatedCode;
+                success = true;
             } else if (!data.wantsToHost) {
-                if (data.gameCode != "" && data.gameCode != null) {
-                    if (games.has(data.gameCode)) {
-                        games.get(data.gameCode).playersInGame.push(socket.id)
-                        clients.get(socket.id).inGameRoom = data.gameCode;
+                if (gameCode != "" && gameCode != null) {
+                    if (games.has(gameCode)) {
+                        games.get(gameCode).playersInGame.push(socket.id)
+                        clients.get(socket.id).inGameRoom = gameCode;
+                        success = true;
                     } else {
                         socket.emit('displayErrorMsg', {
                             msg: "Game Code Invalid"
@@ -73,6 +80,12 @@ io.sockets.on('connection', function(socket) {
             }
         } else {
             console.log("User '" + clients.get(socket.id).name + "' tried to join another game before leaving the one they are in.");
+        }
+
+        if (success) {
+            socket.emit('gameSetup', {
+                gameCode: gameCode
+            });
         }
 
     })
@@ -85,12 +98,14 @@ io.sockets.on('connection', function(socket) {
         if (gamecode != null) {
             if (games.get(gamecode).playersInGame.length == 1) {
                 games.delete(gamecode); // If by this player leaving the room becomes empty delete the room.
+                console.log("Room " + gamecode + " has been deleted due to lack of connected players.");
             } else if (games.get(gamecode).playersInGame.length > 1) {
                 index = games.get(gamecode).playersInGame.indexOf(socket.id);
                 games.get(gamecode).playersInGame.splice(index, 1); // else just remove the players socket.id from the array playersInGame.
             }
         }
 
+        console.log(clients.get(socket.id).name + " has disconnected.");
         clients.delete(socket.id); // delete the client from the clients array.
     })
 
