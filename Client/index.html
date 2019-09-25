@@ -103,7 +103,6 @@
             }
 
             #gameContentContainer {
-                background-color: red;
                 width: 95%;
                 height: 800px;
                 margin: 0 auto;
@@ -111,12 +110,11 @@
             }
 
             #leftPanelContainer {
-                background-color: blue;
                 height:700px;
                 width:50%;
                 clear:none;
                 float: left;
-                margin-right:-500px;
+                margin-right:-450px;
             }
 
             #rightPanelContainer {
@@ -125,30 +123,66 @@
                 width:50%;
                 clear:none;
                 float: right;
-                margin-left:-500px;
+                margin-left:-450px;
             }
 
             #gamePanelContainer {
                 background-color: green;
-                width: 1000px;
+                width: 900px;
                 height : 700px;
                 clear:none;
                 float: left;
             }
 
             #leftPanelContainer>div {
-                padding-right: 500px;
+                padding-right: 462px;
             }
 
             #rightPanelContainer>div {
-                padding-left: 500px;
+                padding-left: 462px; /* 10px added for seperation between side panels and main center panel. And 2px added for the 2px border of the side panel items. */
+            }
+
+            #leftPanelContent {
+                height: 100%;
+            }
+
+            #leftPanelContent>div {
+                width: 100%;
+                border-radius: 5px;
+                margin-bottom: 10px;
             }
 
             #gamecodeTextContainer {
-                width: 98%;
+                height: 100px;
+                text-align: center;
+                line-height: 50px;
+                background-color: white;
+                border: 1px solid black;
+            }
+
+            #playersInGameContainer {
+                height: 300px;
+                background-color: white;
+                border: 1px solid black;
+            }
+
+            #playersInGameText {
+                width: 100%;
                 height: 50px;
-                margin: 0 auto;
-                background-color: aqua;
+                text-align: center;
+                line-height: 50px;
+                font-size: 25px;
+
+            }
+
+            #leaveGameButton {
+                height: 50px;
+                background-color: #dc3545;
+                border: 1px solid #dc3545;
+                text-align: center;
+                line-height: 50px;
+                color: white;
+                font-size: 25px;
             }
 
             /* The switch - the box around the slider */
@@ -246,8 +280,18 @@
         <div ID="gameContentContainer">
 
             <div ID="leftPanelContainer">
-                <div ID="gamecodeTextContainer">
-
+                <div ID="leftPanelContent">
+                    <div ID="gamecodeTextContainer">
+                            You are in game:<br/>: TEST :
+                    </div>
+                    <div ID="playersInGameContainer">
+                        <div ID="playersInGameText">
+                            Players in Game:
+                        </div>
+                    </div>
+                    <div ID="leaveGameButton">
+                        Leave Game
+                    </div>
 
                 </div>
             </div>
