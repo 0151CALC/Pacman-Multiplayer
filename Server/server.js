@@ -33,6 +33,20 @@ io.sockets.on('connection', function(socket) {
         inGameRoom: null,
     }
 
+    function updatePlayersInGame(gameCode) {
+
+        socketsInGame = games.get(gameCode).playersInGame;
+        playersInGame = [];
+
+        for (i = 0; i < socketsInGame.length; i++) {
+            playersInGame.push(clients.get(socketsInGame[i]).name)
+        }
+
+        io.sockets.in(gameCode).emit('updatePlayersInGame', {
+            playersInGame: playersInGame
+        });
+    }
+
     socket.on('joinGame', function(data) {
 
         var success = false
@@ -53,7 +67,7 @@ io.sockets.on('connection', function(socket) {
                 }
 
                 var game = {
-                    roomCode: generatedCode,
+                    gameCode: generatedCode,
                     playersInGame: [
                         socket.id
                     ]
@@ -83,9 +97,12 @@ io.sockets.on('connection', function(socket) {
         }
 
         if (success) {
+
+            socket.join(gameCode);
             socket.emit('gameSetup', {
                 gameCode: gameCode
             });
+            updatePlayersInGame(gameCode);
         }
 
     })
@@ -102,6 +119,7 @@ io.sockets.on('connection', function(socket) {
             } else if (games.get(gamecode).playersInGame.length > 1) {
                 index = games.get(gamecode).playersInGame.indexOf(socket.id);
                 games.get(gamecode).playersInGame.splice(index, 1); // else just remove the players socket.id from the array playersInGame.
+                updatePlayersInGame(gamecode);
             }
         }
 
