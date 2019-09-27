@@ -175,6 +175,9 @@
             }
 
             #leaveGameButton {
+                width: 100%;
+                border-radius: 5px;
+                margin-bottom: 10px;
                 height: 50px;
                 background-color: #dc3545;
                 border: 1px solid #dc3545;
@@ -263,7 +266,7 @@
 
 
         <form ID="mainForm" action="">
-            <input ID="username" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter a Username" required>
+            <input ID="username" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter a Username" minlength="3" maxlength="14" required>
             <div ID="hostContainer">
                 <h4>Host a game?</h4>
                 <label class="switch">
@@ -271,7 +274,7 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <input ID="gamecodeInput" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter the Game Code" onchange="document.getElementById('gamecodeInput').style.color = 'black'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" required>
+            <input ID="gamecodeInput" type="text" spellcheck="false" autocorrect="off" autocomplete="off" autofocus="autofocus" placeholder="Enter the Game Code" onchange="document.getElementById('gamecodeInput').style.color = 'black'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" minlength="4" maxlength="4" required>
             <input ID="submitButton" type="submit" value="Play!">
             <div ID="errorContainer"></div>
         </form>
@@ -293,9 +296,7 @@
                             Players in Game:
                         </div>
                     </div>
-                    <div ID="leaveGameButton">
-                        Leave Game
-                    </div>
+                    <input ID="leaveGameButton" value="Leave Game" type="button" onclick="leaveGame()" />
 
                 </div>
             </div>
@@ -349,6 +350,18 @@
                 newPlayerDiv.innerHTML = name;
 
                 listContainer.appendChild(newPlayerDiv);
+            }
+
+            function leaveGame() {
+                socket.emit('leaveGame');
+
+                while (document.getElementById("playersInGameContainer").lastChild) {
+                    document.getElementById("playersInGameContainer").removeChild(document.getElementById("playersInGameContainer").lastChild);
+                }
+
+                document.getElementById("mainForm").style.display = "block";
+                document.getElementById("gameContentContainer").style.display = "none";
+
             }
 
             $('#mainForm').submit(function(event){

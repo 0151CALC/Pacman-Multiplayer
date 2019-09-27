@@ -47,6 +47,27 @@ io.sockets.on('connection', function(socket) {
         });
     }
 
+    function leaveProtocol(disconnection) {
+        gamecode = clients.get(socket.id).inGameRoom;
+        if (gamecode != null) {
+            if (games.get(gamecode).playersInGame.length == 1) {
+                games.delete(gamecode); // If by this player leaving the room becomes empty delete the room.
+                clients.get(socket.id).inGameRoom = null;
+                console.log("Room " + gamecode + " has been deleted due to lack of connected players.");
+            } else if (games.get(gamecode).playersInGame.length > 1) {
+                index = games.get(gamecode).playersInGame.indexOf(socket.id);
+                games.get(gamecode).playersInGame.splice(index, 1); // else just remove the players socket.id from the array playersInGame.
+                clients.get(socket.id).inGameRoom = null;
+                updatePlayersInGame(gamecode);
+            }
+        }
+
+        if (disconnection) {
+            console.log(clients.get(socket.id).name + " has disconnected.");
+            clients.delete(socket.id); // delete the client from the clients array.
+        }
+    }
+
     socket.on('joinGame', function(data) {
 
         var success = false
@@ -110,21 +131,13 @@ io.sockets.on('connection', function(socket) {
     clients.set(socket.id, client)
 
     socket.on('disconnect', function() {
+        leaveProtocol(true);
+    })
 
-        gamecode = clients.get(socket.id).inGameRoom;
-        if (gamecode != null) {
-            if (games.get(gamecode).playersInGame.length == 1) {
-                games.delete(gamecode); // If by this player leaving the room becomes empty delete the room.
-                console.log("Room " + gamecode + " has been deleted due to lack of connected players.");
-            } else if (games.get(gamecode).playersInGame.length > 1) {
-                index = games.get(gamecode).playersInGame.indexOf(socket.id);
-                games.get(gamecode).playersInGame.splice(index, 1); // else just remove the players socket.id from the array playersInGame.
-                updatePlayersInGame(gamecode);
-            }
-        }
+    socket.on('leaveGame', function() {
 
-        console.log(clients.get(socket.id).name + " has disconnected.");
-        clients.delete(socket.id); // delete the client from the clients array.
+        console.log('whats to leave');
+        leaveProtocol(false);
     })
 
 })
