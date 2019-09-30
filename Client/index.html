@@ -224,6 +224,30 @@
                 font-size: 25px;
             }
 
+            #copyInviteLink {
+                width: 100%;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                height: 50px;
+                background-color: #17a2b8;
+                border: 1px solid #17a2b8;
+                text-align: center;
+                line-height: 50px;
+                color: white;
+                font-size: 25px;
+            }
+
+            table {
+                width: 100%;
+                height: 100%;
+                border-collapse: separate;
+
+            }
+
+            td {
+                border: 1px solid black;
+            }
+
             /* The switch - the box around the slider */
             .switch {
                 position: relative;
@@ -333,6 +357,7 @@
                             Players in Game:
                         </div>
                     </div>
+                    <input ID="copyInviteLink" value="Get Invite Link" type="button" onclick="copyInviteLink()" />
                     <input ID="leaveGameButton" value="Leave Game" type="button" onclick="leaveGame()" />
 
                 </div>
@@ -360,8 +385,15 @@
             var socket = io.connect();
 
             var localName;
+            var gamecode;
 
             var wantsToHost = false
+
+            urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.has('gamecode')) {
+                document.getElementById("gamecodeInput").value = urlParams.get('gamecode');
+            }
 
             function setHost() {
                 document.getElementById("errorContainer").style.display = "none";
@@ -395,6 +427,29 @@
                 listContainer.appendChild(newPlayerDiv);
             }
 
+            function copyInviteLink() {
+
+                console.log('copyingggg')
+
+                var temp = document.createElement('textarea');
+                var url = window.location.href.split('?')[0];
+
+                temp.value = url + "?gamecode=" + gamecode;
+                temp.setAttribute('readonly', '');
+                temp.style = {position: 'absolute', left: '-9999px'};
+
+                document.body.appendChild(temp);
+
+                temp.select();
+                temp.setSelectionRange(0, 99999);
+
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+
+                document.getElementById("copyInviteLink").value = "Copied!";
+
+            }
+
             function leaveGame() {
                 socket.emit('leaveGame');
 
@@ -407,14 +462,42 @@
 
             }
 
+            function build() {
+                gameContainer = document.getElementById("gamePanelContainer");
+
+                var cellSizeInPX = 25;
+
+                var numOfHorizontalCells = gameContainer.offsetWidth / cellSizeInPX;
+                var numOfVerticalCells = gameContainer.offsetHeight / cellSizeInPX;
+
+                var gameTable = document.createElement('table');
+
+                for (i = 0; i < numOfVerticalCells; i++) {
+
+                    var row = document.createElement("tr");
+                    gameTable.appendChild(row);
+
+                    for (j = 0; j < numOfHorizontalCells; j++) {
+                        var col = document.createElement("td");
+                        col.style.width = cellSizeInPX;
+                        col.style.height = cellSizeInPX;
+                        row.appendChild(col);
+                    }
+                }
+
+                gameContainer.appendChild(gameTable);
+
+            }
+
             $('#mainForm').submit(function(event){
 
                 localName = document.getElementById("username").value;
+                gamecode = document.getElementById("gamecodeInput").value;
 
                 socket.emit('joinGame', {
-                    name: document.getElementById("username").value,
+                    name: localName,
                     wantsToHost: wantsToHost,
-                    gameCode: document.getElementById("gamecodeInput").value
+                    gameCode: gamecode
                 });
 
 
@@ -433,6 +516,7 @@
                 document.getElementById("mainForm").style.display = "none";
                 document.getElementById("gameContentContainer").style.display = "block";
                 document.getElementById("gamecodeText").innerHTML = data.gameCode;
+                gamecode = data.gameCode;
                 createPlayerSlot(localName, true);
 
 
