@@ -1,0 +1,73 @@
+<html>
+
+    <head>
+
+        <title>Pacman Single Player Testing</title>
+
+        <style>
+
+            table{
+
+                border-collapse: collapse;
+            }
+
+            td {
+                width: 50px;
+                height: 50px;
+                background-color: red;
+                padding: 0;
+                margin: 0;
+            }
+
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <table ID="gameTable"></table>
+
+    </body>
+
+    <script>
+
+        grid = [];
+
+        table = document.getElementById("gameTable");
+
+        initTable(10, 10);
+
+        pacman = document.createElement("div");
+
+        pacman.style.width = "40px";
+        pacman.style.height = "40px";
+        pacman.style.color = "yellow";
+
+        grid[4][5].appendChild(pacman);
+
+        function initTable(xLen, yLen) {
+            for (i = 0; i < yLen; i++) {
+
+                grid[i] = [];
+
+                row = document.createElement("tr");
+
+                for (j = 0; j < xLen; j++) {
+
+                    col = document.createElement("td");
+
+                    grid[i][j] = col;
+
+                    row.appendChild(col);
+
+                }
+                table.appendChild(row);
+            }
+        }
+
+
+    </script>
+
+
+</html>
