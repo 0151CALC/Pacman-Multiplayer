@@ -126,7 +126,7 @@
             }
 
             #gamePanelContainer {
-                background-color: green;
+                /*background-color: green; */
                 width: 900px;
                 height : 700px;
                 clear:none;
@@ -465,6 +465,8 @@
             function build() {
                 gameContainer = document.getElementById("gamePanelContainer");
 
+                gameContainer.innerHTML = ""
+
                 var cellSizeInPX = 25;
 
                 var numOfHorizontalCells = gameContainer.offsetWidth / cellSizeInPX;
@@ -481,13 +483,179 @@
                         var col = document.createElement("td");
                         col.style.width = cellSizeInPX;
                         col.style.height = cellSizeInPX;
+                        col.id = "r" + i + "c" + j;
+                        col.dataset.visited = false;
                         row.appendChild(col);
                     }
                 }
 
                 gameContainer.appendChild(gameTable);
 
+                createMaze();
+
+                function createMaze() {
+                    for (i = 0; i < numOfVerticalCells; i++) {
+                        for (j = 0; j < numOfHorizontalCells; j++) {
+
+                            cell = document.getElementById("r" + i + "c" + j)
+
+                            console.log(checkNeighbours(i,j))
+
+
+                            //removeWall(i,j);
+                        }
+                    }
+
+                    function checkNeighbours(row, col) {
+                        var neighbours = []
+                        var neighbour;
+
+                        if (row != 0 && row != (numOfHorizontalCells - 1) && col != 0 && col != (numOfVerticalCells - 1)) {
+                            checkNeighbour("right");
+                            checkNeighbour("left");
+                            checkNeighbour("top");
+                            checkNeighbour("bottom");
+                        }
+
+                        return neighbours
+
+                        function checkNeighbour(dir) {
+                            switch (dir) {
+                                case "right":
+                                    neighbour = document.getElementById("r" + row + "c" + (col + 1));
+                                    if (neighbour.dataset.visited == "false") { neighbours.push(neighbour) }
+                                    break;
+                                case "left":
+                                    neighbour = document.getElementById("r" + row + "c" + (col - 1));
+                                    if (neighbour.dataset.visited == "false") { neighbours.push(neighbour) }
+                                    break;
+                                case "top":
+                                    neighbour = document.getElementById("r" + (row + 1) + "c" + col);
+                                    if (neighbour.dataset.visited == "false") { neighbours.push(neighbour) }
+                                    break;
+                                case "bottom":
+                                    neighbour = document.getElementById("r" + (row - 1) + "c" + col);
+                                    if (neighbour.dataset.visited == "false") { neighbours.push(neighbour) }
+                                    break;
+                            }
+                        }
+                    }
+
+                    // write a funciton called avaliableDirections and have it return all the valid directions that the cell is able to make. This will replace the junky code below and make the code more reuseable.
+
+                    function removeWall(row, col) {
+
+                        var cell = document.getElementById("r" + row + "c" + col)
+                        var cell2;
+
+                        if (row == 0) {
+                            if (col == 0) {
+                                if (Math.random >= 0.5) {
+                                    removeWallDir("right")
+                                } else {
+                                    removeWallDir("bottom")
+                                }
+                            } else if (col == numOfHorizontalCells - 1) {
+                                if (Math.random >= 0.5) {
+                                    removeWallDir("left")
+                                } else {
+                                    removeWallDir("bottom")
+                                }
+                            } else {
+                                var rannum = Math.random();
+                                if (rannum <= 0.33) {
+                                    removeWallDir("left")
+                                } else if (rannum <= 0.66) {
+                                    removeWallDir("right")
+                                } else {
+                                    removeWallDir("bottom")
+                                }
+                            }
+                        } else if (row == numOfVerticalCells - 1) {
+                            if (col == 0) {
+                                if (Math.random >= 0.5) {
+                                    removeWallDir("right")
+                                } else {
+                                    removeWallDir("top")
+                                }
+                            } else if (col == numOfHorizontalCells - 1) {
+                                if (Math.random >= 0.5) {
+                                    removeWallDir("left")
+                                } else {
+                                    removeWallDir("top")
+                                }
+                            } else {
+                                var rannum = Math.random();
+                                if (rannum <= 0.33) {
+                                    removeWallDir("left")
+                                } else if (rannum <= 0.66) {
+                                    removeWallDir("right")
+                                } else {
+                                    removeWallDir("top")
+                                }
+                            }
+                        } else {
+                            if (col == 0) {
+                                var rannum = Math.random();
+                                if (rannum <= 0.33) {
+                                    removeWallDir("bottom")
+                                } else if (rannum <= 0.66) {
+                                    removeWallDir("right")
+                                } else {
+                                    removeWallDir("top")
+                                }
+                            } else if (col == numOfHorizontalCells - 1) {
+                                var rannum = Math.random();
+                                if (rannum <= 0.33) {
+                                    removeWallDir("bottom")
+                                } else if (rannum <= 0.66) {
+                                    removeWallDir("left")
+                                } else {
+                                    removeWallDir("top")
+                                }
+                            } else {
+                                var rannum = Math.random();
+                                if (rannum <= 0.25) {
+                                    removeWallDir("top")
+                                } else if (rannum <= 0.5) {
+                                    removeWallDir("bottom")
+                                } else if (rannum <= 0.75) {
+                                    removeWallDir("left")
+                                } else {
+                                    removeWallDir("right")
+                                }
+                            }
+                        }
+
+                        function removeWallDir(dir) {
+                            switch(dir) {
+                                case "left":
+                                    cell.style.borderLeft = "none";
+                                    cell2 = document.getElementById("r" + row + "c" + (col - 1))
+                                    cell2.style.borderRight = "none";
+                                    break;
+                                case "right":
+                                    cell.style.borderRight = "none";
+                                    cell2 = document.getElementById("r" + row + "c" + (col + 1))
+                                    cell2.style.borderLeft = "none";
+                                    break;
+                                case "bottom":
+                                    cell.style.borderBottom = "none";
+                                    cell2 = document.getElementById("r" + (row + 1) + "c" + col)
+                                    cell2.style.borderTop = "none";
+                                    break;
+                                case "top":
+                                    cell.style.borderTop = "none";
+                                    cell2 = document.getElementById("r" + (row - 1) + "c" + col)
+                                    cell2.style.borderBottom = "none";
+                                    break;
+                            }
+                        }
+                    }
+
+                }
             }
+
 
             $('#mainForm').submit(function(event){
 
